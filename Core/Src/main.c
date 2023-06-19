@@ -51,6 +51,8 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 void piscaled(int tempo1,int tempo2);
 void onbuzer(int tempo);
+int verifica_o_Botao();
+void pisca1nled(int tempo1);
 
 /* USER CODE END PFP */
 
@@ -89,8 +91,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  piscaled(200, 200);
-  onbuzer(1000);
+
+
+  //piscaled(200, 200);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -100,6 +105,12 @@ int main(void)
 
   while (1)
   {
+	  pisca1nled(1000);
+
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -161,7 +172,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_10|GPIO_PIN_11, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12
+                          |GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -170,11 +182,25 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB1 PB10 PB11 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_10|GPIO_PIN_11;
+  /*Configure GPIO pins : PB1 PB10 PB11 PB12
+                           PB13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12
+                          |GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA8 PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB6 PB7 PB8 PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
@@ -182,25 +208,93 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void piscaled(int tempo1,int tempo2)
 {
+	//12 = LedB0
+	//10 = LedB1
+	//11 = LedB2
+	//13 = LedB3
 
-
-
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, 1);
 	HAL_Delay(tempo1);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 0);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, 0);
 	HAL_Delay(tempo2);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 1);
 	HAL_Delay(tempo1);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 0);
 	HAL_Delay(tempo2);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 1);
+	HAL_Delay(tempo1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 0);
+	HAL_Delay(tempo2);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1);
+	HAL_Delay(tempo1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 0);
+	HAL_Delay(tempo2);
 
 }
+
+void pisca1nled(int tempo1)
+{
+	//12 = LedB0
+	//10 = LedB1
+	//11 = LedB2
+	//13 = LedB3
+if(verifica_o_Botao() == 0){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, 1);
+		HAL_Delay(tempo1);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, 0);
+
+}
+else if (verifica_o_Botao() == 1){
+
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 1);
+	HAL_Delay(tempo1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, 0);
+
+}
+else if(verifica_o_Botao() == 2){
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 1);
+	HAL_Delay(tempo1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, 0);
+
+}
+else if(verifica_o_Botao() == 3){
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1);
+	HAL_Delay(tempo1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 0);
+
+
+	}
+}
+
 void onbuzer(int tempo)
 {
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 0);
 	HAL_Delay(tempo);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 1);
+}
+int verifica_o_Botao()
+{
+	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0)
+	{
+		return 0;
+
+	}
+	else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)== 0)
+	{
+		return 1;
+	}
+	else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+	{
+		return 2;
+	}
+	else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0)
+	{
+		return 3;
+	}
+	else
+		return 4;
+
 }
 
 /* USER CODE END 4 */
